@@ -1,19 +1,18 @@
-import { IBaseErrorOption } from "@/interfaces";
-
-
+export interface IBaseErrorOption {
+    code: number;
+    type: string;
+    message: string;
+    data?: any;
+}
 export class BaseError extends Error {
     constructor(options: IBaseErrorOption) {
-        super()
-        if (!options.message) {
-            options.message = options.type
-        }
-        this.options = options
-
+        super();
+        this.options = options;
     }
 
-    public options: IBaseErrorOption
+    options: IBaseErrorOption;
 
     toJSON() {
-        return this.options
+        return this.options;
     }
 }

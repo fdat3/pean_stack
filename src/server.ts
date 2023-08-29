@@ -1,6 +1,6 @@
 import * as cluster from 'cluster'
 import * as os from 'os'
-import { scheduleService } from './services'
+// import { scheduleService } from './services'
 
 const cpuCount = os.cpus().length
 const webWorkers: any[] = []
@@ -9,7 +9,7 @@ if (cluster.isMaster) {
     // Create a worker for each CPU
     for (let i = 0; i < cpuCount; i += 1) {
         if (i === 0) {
-            scheduleService.scheduleAll();
+            // scheduleService.scheduleAll();
         }
         // addJobWorker();
         addWebWorker();

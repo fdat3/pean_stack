@@ -1,25 +1,22 @@
-import {BaseError} from './base'
-import {AppExceptionType, HttpStatus} from "@/common/enum";
-
-class RouterErrorService extends BaseError {
-    constructor(type?: AppExceptionType, message?: string, code?: HttpStatus) {
+import { BaseError } from './base';
+class RouterException extends BaseError {
+    constructor(key: string, message: string, code?: number) {
         super({
-            code: code || HttpStatus.INTERNAL_SERVER_ERROR,
-            type,
-            message
-        })
+            code: code || 500,
+            type: `router_exception_${key}`,
+            message,
+        });
     }
 }
 
-export class RouterExceptionService {
-
-    public somethingWentWrong() {
-        return new RouterErrorService(AppExceptionType.UNEXPECTED)
+export class RouterErrorService {
+    somethingWentWrong() {
+        return new RouterException('something_went_wrong', 'Sorry! Something went wrong.');
     }
     badRequest() {
-        return new RouterErrorService(AppExceptionType.BAD_REQUEST, null, HttpStatus.BAD_REQUEST)
+        return new RouterException('bad_request', 'Bad Request.', 400);
     }
     requestDataInvalid(message: string) {
-        return new RouterErrorService(AppExceptionType.BAD_REQUEST, message, 403)
+        return new RouterException('data_invalid', message, 403);
     }
 }

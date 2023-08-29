@@ -1,6 +1,6 @@
 import {
-  Employee,
-} from '@/models/tables';
+    User,
+} from '../models/tables/user';
 
 console.log('Loading Associate Model.....');
 

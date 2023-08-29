@@ -1,35 +1,36 @@
-import { BaseError } from './base'
-import { AuthException, HttpStatus } from "@/common/enum";
-class AuthErrorsService extends BaseError {
-    constructor(key: AuthException, message?: string, code?: HttpStatus) {
+import { ERROR_CODE } from '@/const';
+import { BaseError } from './base';
+class AuthException extends BaseError {
+    constructor(key: string, message: string, code?: number) {
         super({
             code: code || 401,
-            type: key,
-            message
-        })
+            type: `auth_exception_${key}`,
+            message,
+        });
     }
 }
-export class AuthExceptionService {
-    public unAuthorized() {
-        return new AuthErrorsService(AuthException.UNAUTHORIZED, null, HttpStatus.UNAUTHORIZED)
+export class AuthErrorService {
+    unauthorized() {
+        return new AuthException('unauthorized', 'Unauthorized.');
     }
-    public permissionDeny() {
-        return new AuthErrorsService(AuthException.PERMISSION_DENY, null, HttpStatus.FORBIDDEN)
+    permissionDeny() {
+        return new AuthException('permission_deny', 'Permission Deny');
     }
-    public badToken() {
-        return new AuthErrorsService(AuthException.BAD_TOKEN, null, HttpStatus.FORBIDDEN)
+    permissionDenyDevice() {
+        return new AuthException('device_deny', 'Device Deny');
     }
-    public tokenExpired() {
-        return new AuthErrorsService(AuthException.TOKEN_EXPIRED, null, HttpStatus.FORBIDDEN)
+    badToken() {
+        return new AuthException('bad_token', 'Bad Token');
     }
-    public customError(message?: string, code?: HttpStatus) {
-        return new AuthErrorsService(AuthException.CUSTOM, message, code)
-    }
-    public badRefreshToken() {
-        return new AuthErrorsService(AuthException.BAD_REFRESH_TOKEN, 'Bad Refresh Token', HttpStatus.CONFLICT)
-    }
-    public refreshTokenExpired() {
-        return new AuthErrorsService(AuthException.TOKEN_EXPIRED, 'Refresh Token Expired', HttpStatus.CONFLICT)
+    tokenExpired() {
+        return new AuthException('token_expired', 'Token Expried');
     }
 
+    codeExpired() {
+        return new AuthException('code_expired', '인증번호가 유효하지 않습니다.', ERROR_CODE.EXPIRE_TOKEN);
+    }
+
+    badCode() {
+        return new AuthException('bad_code', '인증번호를 확인해주세요.', ERROR_CODE.BAD_TOKEN);
+    }
 }

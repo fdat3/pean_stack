@@ -1,4 +1,1 @@
-// USER & EMPLOYEE
-
-
-// COURSE
+export * from './user';
