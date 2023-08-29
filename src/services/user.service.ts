@@ -18,7 +18,12 @@ export class UserService extends CrudService<typeof User> {
         await this.exec(item.update(params));
         return await this.getItem(option);
     }
-
+    async checkRefreshToken(params: any, option?: ICrudOption) {
+        const item = await this.exec(this.model.findByPk(params.user_id), {
+            allowNull: false,
+        });
+        return item;
+    }
     async register(params: any, option?: ICrudOption) {
         let newUser: any;
         const user = await User.count({
