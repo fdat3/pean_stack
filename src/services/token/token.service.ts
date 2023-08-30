@@ -2,7 +2,7 @@ import { errorService, userService } from '@/services';
 import { config } from '@/config';
 import * as moment from "moment";
 import * as jwt from 'jwt-simple';
-import { ERROR_CODE } from '../const';
+import { ERROR_CODE } from '../../const';
 import { v1 as uuidv1 } from 'uuid';
 
 export interface IGenerateTokenOption {

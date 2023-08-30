@@ -1,6 +1,10 @@
 import * as cluster from 'cluster'
 import * as os from 'os'
-// import { scheduleService } from './services'
+import { scheduleService } from './services'
+
+
+
+
 
 const cpuCount = os.cpus().length
 const webWorkers: any[] = []
@@ -38,6 +42,9 @@ if (cluster.isMaster) {
         require('./index'); // initialize the http server here
     }
 }
+
+
+
 
 function addWebWorker() {
     webWorkers.push(cluster.fork({ web: 1 }).id);

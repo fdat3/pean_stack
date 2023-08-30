@@ -49,3 +49,6 @@ code-log.txt
 .elasticbeanstalk/*
 .ebextensions
 aws_dockers
+
+#firebase
+pean-stack-sdk.json

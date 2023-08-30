@@ -2,8 +2,8 @@ import { ErrorService } from './errorService';
 import { UtilService } from "@/services/utilService";
 // Crud
 import { ICrudExecOption, CrudService } from './crudService';
-import { UserService } from './user.service';
-import { TokenService } from './token.service';
+import { UserService } from './api/user.service';
+import { TokenService } from './token/token.service';
 import { ScheduleService } from './scheduleService';
 
 // SECTION

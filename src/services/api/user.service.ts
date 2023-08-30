@@ -1,9 +1,9 @@
 import { User } from "@/models/tables";
-import { CrudService } from "./crudService.pg";
+import { CrudService } from "../crudService.pg";
 import { ICrudOption } from "@/interfaces";
 import userSecurity from "@/security/user";
 import { error } from "console";
-import { errorService } from ".";
+import { errorService } from "..";
 export class UserService extends CrudService<typeof User> {
     private userSecurity: userSecurity
 
