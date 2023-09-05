@@ -224,6 +224,7 @@ export class TokenService {
         );
     }
 
+
     async getUserAccessToken(token: string, secret: string = '') {
         secret = secret + config.server.secret;
         let result = undefined;

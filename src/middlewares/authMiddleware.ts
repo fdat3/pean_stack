@@ -1,10 +1,9 @@
 import { BaseMiddleware } from './base';
 import { errorService, tokenService, userService } from '@/services';
-import { ICrudOption } from '../interfaces'
 import * as express from 'express';
 import { Request, Response } from '@/routers/base';
 const HEADERS = 'authorization';
-export class AuthInfoMiddleware extends BaseMiddleware {
+export class AuthMiddleware extends BaseMiddleware {
     async use(req: Request, res: Response, next: express.NextFunction, providers: string[] = []) {
         if (!!req.headers[HEADERS]) {
             const bearerHeader = req.headers[HEADERS].toString();

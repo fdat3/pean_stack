@@ -12,4 +12,4 @@ function getConfig(environment: string) {
         return firebaseConfig
     }
 }
-export const config = getConfig(process.env.NODE_ENV)
+export const config: any = getConfig(process.env.NODE_ENV)

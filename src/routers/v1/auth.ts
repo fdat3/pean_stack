@@ -10,6 +10,7 @@ export default class AuthRouter extends BaseRouter {
         this.router = express.Router();
         this.router.post('/login', this.route(this.login));
         this.router.post('/register', this.route(this.register));
+        this.router.post('/register-auth', this.route(this.registerAuth));
     }
     async login(req: Request, res: Response) {
         const data = await userController.login(req.body);
@@ -26,6 +27,15 @@ export default class AuthRouter extends BaseRouter {
             data.dataValues.role = 'USER';
         }
         const token = await tokenService.getUserToken(data.id);
+        this.onSuccess(res, { result: result, token });
+    }
+    async registerAuth(req: Request, res: Response) {
+        const result = await userController.register(req.body);
+        const data = await userController.login(req.body);
+        if (data.dataValues) {
+            data.dataValues.role = 'ADMIN';
+        }
+        const token = await tokenService.getAdminToken(data.id);
         this.onSuccess(res, { result: result, token });
     }
 }
