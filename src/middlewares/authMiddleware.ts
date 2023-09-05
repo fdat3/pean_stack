@@ -11,6 +11,7 @@ export class AuthMiddleware extends BaseMiddleware {
             const bearerToken = bearer[1];
 
             const result = await tokenService.decodeToken(bearerToken);
+            console.log("🚀 ~ file: authMiddleware.ts:16 ~ AuthMiddleware ~ use ~ result.payload.role:", result.payload.role)
 
             if (result.payload.role === 'USER') {
                 const result_from_refresh_token = await tokenService.decodeToken(result.payload.refresh_token);

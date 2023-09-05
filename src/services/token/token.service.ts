@@ -104,26 +104,12 @@ export class TokenService {
             if (result.role == 'USER') {
                 const user = await userService.getItem({
                     filter: { id: result.payload.user_id },
-                    attributes: ['deleted_at', 'status'],
-                    include: [
-                        {
-                            association: 'last_penalty',
-                        },
-                    ],
                     paranoid: false,
                     where: undefined
                 });
 
                 if (user?.deleted_at) {
                     throw errorService.database.customError('존재하지 않는 계정입니다.', ERROR_CODE.USER_DELETED);
-                }
-
-                if (user && !user.status) {
-                    if (user.last_penalty.dataValues.type === 'BLOCK') {
-                        throw errorService.database.customError('회원님의 계정이 영구적으로 차단되었습니다', ERROR_CODE.BLOCK_USER);
-                    }
-                    const day = moment(user.last_penalty.dataValues.end_date_unix_timestamp, 'x').format('YYYY/MM/DD');
-                    throw errorService.database.customError(`회원님의 계정이 ${day}일까지 차단되었습니다`, ERROR_CODE.BLOCK_USER);
                 }
             }
             return result;
@@ -150,39 +136,30 @@ export class TokenService {
             if (result.role == 'USER') {
                 const user = await userService.getItem({
                     filter: { id: result.payload.user_id },
-                    attributes: ['deleted_at', 'status'],
-                    include: [
-                        {
-                            association: 'last_penalty',
-                        },
-                    ],
                     paranoid: false,
                     where: undefined
                 });
-
-                if (user?.deleted_at) {
-                    throw errorService.database.customError('존재하지 않는 계정입니다.', ERROR_CODE.USER_DELETED);
-                }
-
-                if (user && !user.status) {
-                    if (user.last_penalty.dataValues.type === 'BLOCK') {
-                        throw errorService.database.customError('회원님의 계정이 영구적으로 차단되었습니다', ERROR_CODE.BLOCK_USER);
-                    }
-                    const day = moment(user.last_penalty.dataValues.end_date_unix_timestamp, 'x').format('YYYY/MM/DD');
-                    throw errorService.database.customError(`회원님의 계정이 ${day}일까지 차단되었습니다`, ERROR_CODE.BLOCK_USER);
-                }
             }
             return result;
         } else {
             throw errorService.auth.badToken();
         }
     }
-    async getAdminToken(secret: string = '') {
+    async getAdminToken(user_id: string, secret: string = '') {
         secret = secret + config.server.secret;
-        return await this.generateToken({}, 'admin', {
-            exp: moment().add(99, 'years'),
-            secret,
-        });
+        const refresh_token = await this.generateAndUpdateRefreshToken({ user_id }, 'ADMIN');
+        return await this.generateToken(
+            {
+                user_id,
+                role: 'ADMIN',
+                refresh_token
+            },
+            'ADMIN',
+            {
+                exp: moment().add(99, 'years'),
+                secret,
+            }
+        );
     }
     async getWriteToken(secret: string = '') {
         secret = secret + config.server.secret;
@@ -237,27 +214,9 @@ export class TokenService {
             if (result.role == 'USER') {
                 const user = await userService.getItem({
                     filter: { id: result.payload.user_id },
-                    attributes: ['deleted_at', 'status', 'refresh_token'],
-                    include: [
-                        {
-                            association: 'last_penalty',
-                        },
-                    ],
                     paranoid: false,
                     where: undefined
                 });
-
-                if (user.deleted_at) {
-                    throw errorService.database.customError('존재하지 않는 계정입니다.', ERROR_CODE.USER_DELETED);
-                }
-
-                if (user && !user.status) {
-                    if (user.last_penalty.dataValues.type === 'BLOCK') {
-                        throw errorService.database.customError('회원님의 계정이 영구적으로 차단되었습니다', ERROR_CODE.BLOCK_USER);
-                    }
-                    const day = moment(user.last_penalty.dataValues.end_date_unix_timestamp, 'x').format('YYYY/MM/DD');
-                    throw errorService.database.customError(`회원님의 계정이 ${day}일까지 차단되었습니다`, ERROR_CODE.BLOCK_USER);
-                }
 
                 const result_from_result_token = await this.decodeRefreshToken(result.payload.refresh_token);
                 if (

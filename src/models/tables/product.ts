@@ -1,11 +1,12 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../base';
 
-export const User = sequelize.define(
+export const Product = sequelize.define(
     'products',
     {
         id: {
             type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV1,
             primaryKey: true
         },
         productName: {
