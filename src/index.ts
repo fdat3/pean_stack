@@ -10,6 +10,7 @@ import { sequelize } from "./models";
 import * as path from "path";
 
 
+
 console.log("Starting server with at " + process.pid + " on port " + config.server.port);
 /**
  * Express configuration.
@@ -31,7 +32,7 @@ app.use(
 );
 app.use(
   bodyParser.urlencoded({
-    extended: false,
+    extended: true,
     limit: "50mb",
   })
 );
@@ -40,9 +41,15 @@ app.use(session({
   saveUninitialized: true,
   secret: config.database.sessionSecret,
 }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use("/api/*", cors());
 app.use("/api", api);
+app.use(function (req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
 app.set("port", config.server.port);
 app.get("/", function (request, response) {
   response.send("App is running");

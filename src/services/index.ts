@@ -6,6 +6,7 @@ import { UserService } from './api/user.service';
 import { TokenService } from './token/token.service';
 import { ScheduleService } from './scheduleService';
 import { ProductService } from './api/product.service';
+import { CartService } from './api/cart.service';
 
 // SECTION
 
@@ -15,6 +16,7 @@ const userService = new UserService();
 const productService = new ProductService();
 const tokenService = new TokenService();
 const scheduleService = new ScheduleService();
+const cartService = new CartService();
 // Crud
 
 
@@ -28,5 +30,6 @@ export {
   userService,
   tokenService,
   scheduleService,
-  productService
+  productService,
+  cartService
 };

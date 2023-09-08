@@ -3,7 +3,7 @@ import { errorService, tokenService, userService } from '@/services';
 import * as express from 'express';
 import { Request, Response } from '@/routers/base';
 const HEADERS = 'authorization';
-export class AuthMiddleware extends BaseMiddleware {
+export class TokenMiddleware extends BaseMiddleware {
     async use(req: Request, res: Response, next: express.NextFunction, providers: string[] = []) {
         if (!!req.headers[HEADERS]) {
             const bearerHeader = req.headers[HEADERS].toString();
@@ -12,7 +12,8 @@ export class AuthMiddleware extends BaseMiddleware {
 
             const result = await tokenService.decodeToken(bearerToken);
 
-            if (result.payload.role === 'USER') {
+            console.log("🚀 ~ file: adminMiddleware.ts:16 ~ AdminMiddleware ~ use ~ result.payload.role:", result.payload.role)
+            if (result.payload.role === 'ADMIN') {
                 const result_from_refresh_token = await tokenService.decodeToken(result.payload.refresh_token);
                 const refresh_token = result_from_refresh_token.payload.refresh_token;
                 const user_id = result_from_refresh_token.payload.user_id;
