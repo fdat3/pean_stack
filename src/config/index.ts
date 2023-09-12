@@ -3,6 +3,7 @@ import development from './development'
 import production from './production'
 import firebaseConfig from './firebase'
 
+
 function getConfig(environment: string) {
     if (environment === 'development') {
         return development

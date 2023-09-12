@@ -1,7 +1,6 @@
 import { Request, Response, BaseRouter } from "@/routers/base";
 import * as express from 'express';
 import { tokenMiddleware } from "@/middlewares";
-import { error } from "console";
 import { errorService } from "@/services";
 
 export default class CartRouter extends BaseRouter {
@@ -10,8 +9,8 @@ export default class CartRouter extends BaseRouter {
         super();
         this.router = express.Router();
         this.router.post('/add', this.createMiddlewares(), this.route(this.add));
-        this.router.get('/', this.createMiddlewares(), this.route(this.get));
-        this.router.post('/remove/:id', this.createMiddlewares(), this.route(this.remove));
+        this.router.get('/', this.route(this.get));
+        this.router.delete('/remove/:id', this.createMiddlewares(), this.route(this.remove));
     }
 
     async add(req: Request, res: Response) {
@@ -40,10 +39,12 @@ export default class CartRouter extends BaseRouter {
     }
 
     async get(req: Request, res: Response) {
-        const data: Array<String | Number>[] = req.session.cart;
         const initialValue = 0;
+        const data: Array<string | number>[] = req.session.cart;
         const totalCost = data.reduce((accumulator: any, currentValue: any) => accumulator + currentValue.cost, initialValue);
-        this.onSuccess(res, { ...data, totalCost })
+        let total = req.session.totalCost ? req.session.totalCost : totalCost;
+        req.session.totalCost = totalCost;
+        this.onSuccess(res, { ...data, total })
     }
 
     async remove(req: Request, res: Response) {
@@ -56,8 +57,6 @@ export default class CartRouter extends BaseRouter {
                     if (item.qty > 0) {
                         item.qty--;
                         item.cost = item.qty * item.pd_price;
-                    } else {
-                        return item
                     }
                 })
             } else {

@@ -8,7 +8,8 @@ import * as cors from "cors";
 import { scheduleService } from "./services";
 import { sequelize } from "./models";
 import * as path from "path";
-
+import { engine } from 'express-handlebars';
+const expressHbs = require("express-handlebars");
 
 
 console.log("Starting server with at " + process.pid + " on port " + config.server.port);
@@ -18,8 +19,13 @@ console.log("Starting server with at " + process.pid + " on port " + config.serv
 const app = express();
 // sequelize.sync({force: false, alter: true});
 
-app.set("views", path.join(__dirname, "../views"));
-app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "/views"));
+app.engine('handlebars', engine({
+  defaultLayout: false
+}));
+app.set('view engine', 'handlebars');
+app.set('views', './views');
+
 
 app.get("/policy", function (req, res) {
   res.render("policy");
@@ -52,7 +58,7 @@ app.use(function (req, res, next) {
 });
 app.set("port", config.server.port);
 app.get("/", function (request, response) {
-  response.send("App is running");
+  response.render('index');
 }).listen(app.get("port"), function () {
   if (config.server.host === "localhost") {
     scheduleService.scheduleAll();

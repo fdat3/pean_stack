@@ -31,6 +31,11 @@ export default {
         "auth_provider_x509_cert_url": process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
         "client_x509_cert_url": process.env.FIREBASE_CLIENT_X509_CERT_URL
     },
+    paypal: {
+        'mode': 'live',
+        'client_id': 'AQVDnyCaqUnUbAuVlA10m6ALB9p2IT1dsYY7OyI1nUGzusaYGPoVpbsxnqifftgYFsNgSPPFchkU9D1X',
+        'client_secret': 'EGZ7Lt7nBYh8U-zLHU1IeiYxvDBa8qa6xR2KMH0WePtpjgpbf04IsuzLigh43C8FP19VrTqNdF08enqz'
+    },
     socket: {
         port: 9888
     },
