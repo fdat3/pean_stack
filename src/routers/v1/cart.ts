@@ -1,7 +1,8 @@
 import { Request, Response, BaseRouter } from "@/routers/base";
 import * as express from 'express';
 import { tokenMiddleware } from "@/middlewares";
-import { cartController } from "@/controllers";
+import { error } from "console";
+import { errorService } from "@/services";
 
 export default class CartRouter extends BaseRouter {
     router: express.Router;
@@ -10,24 +11,26 @@ export default class CartRouter extends BaseRouter {
         this.router = express.Router();
         this.router.post('/add', this.createMiddlewares(), this.route(this.add));
         this.router.get('/', this.createMiddlewares(), this.route(this.get));
+        this.router.post('/remove/:id', this.createMiddlewares(), this.route(this.remove));
     }
 
     async add(req: Request, res: Response) {
         try {
             const data = req.body;
-            let qty = 0;
-            let cost = 0;
+            let qty = 1;
+            let cost: number = data.pd_price;
             let cart = req.session.cart ? req.session.cart : [];
             req.session.cart = cart
             const checkItem = cart.find((item: any) => item.pd_id === data.pd_id)
             if (!checkItem) {
                 cart.push({ ...data, qty, cost })
-            }
-            for (let index = 0; index < cart.length; index++) {
-                const element = cart[index];
-                if (element.pd_id === data.pd_id) {
-                    element.qty++;
-                    element.cost = element.qty * element.pd_price;
+            } else {
+                for (let index = 0; index < cart.length; index++) {
+                    const element = cart[index];
+                    if (element.pd_id === data.pd_id) {
+                        element.qty++;
+                        element.cost = element.qty * element.pd_price;
+                    }
                 }
             }
             this.onSuccessAsList(res, cart)
@@ -41,6 +44,29 @@ export default class CartRouter extends BaseRouter {
         const initialValue = 0;
         const totalCost = data.reduce((accumulator: any, currentValue: any) => accumulator + currentValue.cost, initialValue);
         this.onSuccess(res, { ...data, totalCost })
+    }
+
+    async remove(req: Request, res: Response) {
+        const data: Array<String | Number>[] = req.session.cart;
+        const getId = req.params.id
+        const checkItem = data.find((item: any) => item.pd_id === getId)
+        try {
+            if (checkItem) {
+                data.map((item: any) => {
+                    if (item.qty > 0) {
+                        item.qty--;
+                        item.cost = item.qty * item.pd_price;
+                    } else {
+                        return item
+                    }
+                })
+            } else {
+                throw errorService.database.customError('Không tìm thấy giỏ hàng!', 500);
+            }
+        } catch (error) {
+            throw error
+        }
+        this.onSuccess(res, data)
     }
     createMiddlewares(): any[] {
         return [tokenMiddleware.run()];
