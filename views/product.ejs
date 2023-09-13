@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+</head>
+
+<body>
+    <ul>
+        <% data.forEach((item)=>{%>
+            <li>
+                <%=item.pd_price%>
+            </li>
+            <li>
+                <%=item.totalCost%>
+            </li>
+            <%});%>
+    </ul>
+</body>
+
+</html>

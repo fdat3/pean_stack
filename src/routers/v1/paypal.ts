@@ -1,8 +1,13 @@
 import { Request, Response, BaseRouter } from "@/routers/base";
 import * as express from 'express';
 import { tokenMiddleware } from "@/middlewares";
+import { CONST } from "@/config/const";
 const paypal = require('paypal-rest-sdk');
-
+paypal.configure({
+    mode: 'sandbox', //sandbox or live
+    client_id: CONST.client_id,
+    client_secret: CONST.client_secret,
+});
 
 export default class PaypalRouter extends BaseRouter {
     router: express.Router;
@@ -14,46 +19,41 @@ export default class PaypalRouter extends BaseRouter {
     }
 
     async pay(req: Request, res: Response) {
-        const data: Array<String | Number>[] = req.session.cart;
-        const totalCost: number = req.session.totalCost
-        let payload;
-        for (let index = 0; index < data.length; index++) {
-            const value: any = data[index];
-            const create_payment_json = {
-                "intent": "sale",
-                "payer": {
-                    "payment_method": "paypal"
-                },
-                "redirect_urls": {
-                    "return_url": "http://localhost:4000/success",
-                    "cancel_url": "http://localhost:4000/cancel"
-                },
-                "transactions": [{
-                    "item_list": {
-                        "items": [{
-                            "name": `${value.pd_name}`,
-                            "price": `${value.pd_price}`,
-                            "currency": "USD",
-                            "quantity": `${value.qty}`
-                        }]
+        var create_payment_json = {
+            intent: 'sale',
+            payer: {
+                payment_method: 'paypal',
+            },
+            redirect_urls: {
+                return_url: `https://server.fansome.kr:9877/api/v1/paypal/success/${req.body.sku}`,
+                cancel_url: `https://server.fansome.kr:9877/api/v1/paypal/cancel/${req.body.sku}`,
+            },
+            transactions: [
+                {
+                    item_list: {
+                        items: [
+                            {
+                                name: `${req.body.name}`,
+                                price: `${req.body.price}`,
+                                currency: `${req.body.currency}`,
+                                quantity: `${req.body.quantity}`,
+                            },
+                        ],
                     },
-                    "amount": {
-                        "currency": "USD",
-                        "total": `${totalCost}`
+                    amount: {
+                        currency: `${req.body.currency}`,
+                        total: `${req.body.total}`,
                     },
-                    "description": "This is the payment description."
-                }]
-            }
-            payload = create_payment_json
-        }
-        paypal.payment.create(payload, (error: any, payment: any) => {
-            if (error) throw error;
+                },
+            ],
+        };
 
-            payment.links.forEach((link: any) => {
-                if (link.rel === 'approval_url') {
-                    res.redirect(link.href);
-                }
-            });
+        paypal.payment.create(create_payment_json, function (error: any, payment: any) {
+            if (error) {
+                throw error;
+            } else {
+                res.redirect(payment.links[1].href);
+            }
         });
     }
     async success(req: Request, res: Response) {

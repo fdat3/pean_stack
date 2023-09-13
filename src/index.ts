@@ -19,11 +19,7 @@ console.log("Starting server with at " + process.pid + " on port " + config.serv
 const app = express();
 // sequelize.sync({force: false, alter: true});
 
-app.set("views", path.join(__dirname, "/views"));
-app.engine('handlebars', engine({
-  defaultLayout: false
-}));
-app.set('view engine', 'handlebars');
+app.set('view engine', 'ejs');
 app.set('views', './views');
 
 
@@ -58,7 +54,7 @@ app.use(function (req, res, next) {
 });
 app.set("port", config.server.port);
 app.get("/", function (request, response) {
-  response.render('index');
+  response.send('App is running');
 }).listen(app.get("port"), function () {
   if (config.server.host === "localhost") {
     scheduleService.scheduleAll();

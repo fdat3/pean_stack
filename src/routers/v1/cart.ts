@@ -39,8 +39,8 @@ export default class CartRouter extends BaseRouter {
     }
 
     async get(req: Request, res: Response) {
-        const initialValue = 0;
         const data: Array<string | number>[] = req.session.cart;
+        const initialValue = 0;
         const totalCost = data.reduce((accumulator: any, currentValue: any) => accumulator + currentValue.cost, initialValue);
         let total = req.session.totalCost ? req.session.totalCost : totalCost;
         req.session.totalCost = totalCost;
@@ -49,22 +49,12 @@ export default class CartRouter extends BaseRouter {
 
     async remove(req: Request, res: Response) {
         const data: Array<String | Number>[] = req.session.cart;
-        const getId = req.params.id
-        const checkItem = data.find((item: any) => item.pd_id === getId)
-        try {
-            if (checkItem) {
-                data.map((item: any) => {
-                    if (item.qty > 0) {
-                        item.qty--;
-                        item.cost = item.qty * item.pd_price;
-                    }
-                })
-            } else {
-                throw errorService.database.customError('Không tìm thấy giỏ hàng!', 500);
+        const getId: String = req.params.id;
+        data.filter((item: any) => {
+            if (item.pd_id === getId) {
+                item.qty--;
             }
-        } catch (error) {
-            throw error
-        }
+        })
         this.onSuccess(res, data)
     }
     createMiddlewares(): any[] {
