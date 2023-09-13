@@ -1,7 +1,6 @@
 import { Request, Response, BaseRouter } from "@/routers/base";
 import * as express from 'express';
 import { tokenMiddleware } from "@/middlewares";
-import { errorService } from "@/services";
 
 export default class CartRouter extends BaseRouter {
     router: express.Router;
@@ -9,8 +8,26 @@ export default class CartRouter extends BaseRouter {
         super();
         this.router = express.Router();
         this.router.post('/add', this.createMiddlewares(), this.route(this.add));
-        this.router.get('/', this.route(this.get));
+        this.router.put('/update/:id', this.createMiddlewares(), this.route(this.update));
+        this.router.get('/', this.createMiddlewares(), this.route(this.get));
         this.router.delete('/remove/:id', this.createMiddlewares(), this.route(this.remove));
+    }
+
+    async update(req: Request, res: Response) {
+        try {
+            const params = req.params;
+            const data = req.body;
+            const cart: Array<String | Number>[] = req.session.cart;
+            cart.filter((item: any) => {
+                if (params.id === item.pd_id) {
+                    item.qty = data.qty;
+                    item.cost = item.pd_price * item.qty;
+                }
+            })
+            this.onSuccess(res, data)
+        } catch (error) {
+            throw error
+        }
     }
 
     async add(req: Request, res: Response) {

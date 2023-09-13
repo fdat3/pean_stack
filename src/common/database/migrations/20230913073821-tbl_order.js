@@ -1,28 +1,21 @@
+
 const DataTypes = require('sequelize').DataTypes
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('carts', {
+    await queryInterface.createTable('orders', {
       id: {
         type: DataTypes.UUID,
         field: 'id',
         primaryKey: true
       },
-      pdId: {
+      userId: {
         type: DataTypes.UUID,
-        field: 'pd_id'
+        field: 'user_id'
       },
-      pdName: {
-        type: DataTypes.STRING,
-        field: 'pd_name'
-      },
-      pdQuantity: {
-        type: DataTypes.STRING,
-        field: 'pd_quantity'
-      },
-      pdPrice: {
-        type: DataTypes.STRING,
-        field: 'pd_price'
+      isPay: {
+        type: DataTypes.BOOLEAN,
+        field: 'is_pay'
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -35,6 +28,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('carts');
+    await queryInterface.dropTable('orders');
   },
 };
