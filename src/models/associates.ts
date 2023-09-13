@@ -1,7 +1,16 @@
 import {
+    Order,
+    OrderDetails,
     User,
-} from '../models/tables/user';
+} from '../models/tables/';
 
-console.log('Loading Associate Model.....');
+Order.belongsTo(User, {
+    as: 'user',
+    foreignKey: 'user_id'
+})
+OrderDetails.belongsTo(Order, {
+    as: 'order',
+    foreignKey: 'order_id'
+})
 
 

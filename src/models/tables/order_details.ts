@@ -1,21 +1,24 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../base';
 
-export const Cart = sequelize.define(
-    'carts',
+export const OrderDetails = sequelize.define(
+    'order_details',
     {
         id: {
             type: DataTypes.UUID,
             primaryKey: true
         },
-        productName: {
+        orderId: {
+            type: DataTypes.UUID
+        },
+        pdName: {
             type: DataTypes.STRING
         },
-        productPrice: {
-            type: DataTypes.FLOAT
+        quantity: {
+            type: DataTypes.INTEGER.UNSIGNED
         },
-        productType: {
-            type: DataTypes.STRING
+        totalCost: {
+            type: DataTypes.INTEGER.UNSIGNED
         },
         createdAt: {
             type: DataTypes.DATE
@@ -29,3 +32,6 @@ export const Cart = sequelize.define(
     freezeTableName: true,
     paranoid: false,
 })
+
+
+
