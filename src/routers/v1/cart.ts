@@ -56,12 +56,13 @@ export default class CartRouter extends BaseRouter {
     }
 
     async get(req: Request, res: Response) {
-        const data: Array<string | number>[] = req.session.cart;
         const initialValue = 0;
+        const data: Array<string | number>[] = req.session.cart;
         const totalCost = data.reduce((accumulator: any, currentValue: any) => accumulator + currentValue.cost, initialValue);
-        let total = req.session.totalCost ? req.session.totalCost : totalCost;
+        const totalItem = data.reduce((accumulator: any, currentValue: any) => accumulator + currentValue.qty, initialValue);
         req.session.totalCost = totalCost;
-        this.onSuccess(res, { ...data, total })
+        req.session.totalItem = totalItem;
+        this.onSuccess(res, { ...data, totalCost, totalItem })
     }
 
     async remove(req: Request, res: Response) {
@@ -70,6 +71,7 @@ export default class CartRouter extends BaseRouter {
         data.filter((item: any) => {
             if (item.pd_id === getId) {
                 item.qty--;
+                item.cost = item.pd_price * item.qty;
             }
         })
         this.onSuccess(res, data)

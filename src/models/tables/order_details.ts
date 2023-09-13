@@ -6,6 +6,7 @@ export const OrderDetails = sequelize.define(
     {
         id: {
             type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV1,
             primaryKey: true
         },
         orderId: {
