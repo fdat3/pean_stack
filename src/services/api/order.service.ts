@@ -3,9 +3,7 @@ import { CrudService } from "../crudService.pg";
 import { ICrudOption } from "@/interfaces";
 import { error } from "console";
 import { errorService } from "..";
-import { Request, Response, BaseRouter } from "@/routers/base";
-import { UUID, or } from "sequelize";
-import { UUIDV1 } from "sequelize";
+
 
 export class OrderService extends CrudService<typeof Order> {
 

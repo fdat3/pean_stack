@@ -52,6 +52,7 @@ export class TokenService {
         return result;
     }
 
+
     async decodeRefreshToken(token: string, option?: IDecodeTokenOption) {
         let result = undefined;
         try {
