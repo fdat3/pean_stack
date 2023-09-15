@@ -3,6 +3,8 @@ import { CrudService } from "../crudService.pg";
 import { ICrudOption } from "@/interfaces";
 import { error } from "console";
 import { errorService } from "..";
+const nodemailer = require('nodemailer');
+
 
 
 export class OrderService extends CrudService<typeof Order> {
@@ -28,6 +30,38 @@ export class OrderService extends CrudService<typeof Order> {
                 pdName: element.pd_name
             })
         }
+        const sendEmail = await this.model.findOne({
+            where: {
+                id: check.id
+            },
+            include: [
+                {
+                    association: 'user'
+                }
+            ]
+        })
+        await this.sendEmail(sendEmail);
         return check
+    }
+
+    async sendEmail(data: any) {
+        const convertDateTime = new Date(data.createdAt).toLocaleString("vi-VI");
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.EMAIL_USERNAME,
+                pass: 'omln coak wihn dycc',
+            },
+        });
+        const mailOptions = {
+            from: process.env.EMAIL_USERNAME,
+            to: data.user.email,
+            subject: 'PEAN-Stack - XÁC NHẬN ĐƠN HÀNG',
+            text: `Xin chào, ${data.user.fullname}`,
+            html: `${convertDateTime}`,
+        };
+        transporter.sendMail(mailOptions);
     }
 }

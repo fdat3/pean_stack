@@ -13,6 +13,10 @@ module.exports = {
         type: DataTypes.STRING,
         field: 'fullname'
       },
+      email: {
+        type: DataTypes.STRING,
+        field: 'email'
+      },
       password: {
         type: DataTypes.STRING,
         field: 'password'

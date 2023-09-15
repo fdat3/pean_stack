@@ -12,6 +12,9 @@ export const User = sequelize.define(
         fullname: {
             type: DataTypes.STRING
         },
+        email: {
+            type: DataTypes.STRING
+        },
         password: {
             type: DataTypes.STRING
         },
