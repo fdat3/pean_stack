@@ -44,8 +44,53 @@ export class OrderService extends CrudService<typeof Order> {
         return check
     }
 
+    async convertDateTime(data: any) {
+        const options: any = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric"
+        };
+        return new Date(data).toLocaleString('vi-VI', options);
+    }
+
+    async renderHTMLNodeMailer(data: any) {
+        let message = (
+            '<table style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%;">' +
+            '<tr>' +
+            '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;"> Tên sản phẩm </th>' +
+            '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;"> Số lượng </th>' +
+            '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;"> Giá tiền </th>' +
+            '</tr>'
+        );
+
+        for (const item of data) {
+            message += (
+                '<tr>' +
+                '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' + item.pdName + '</td>' +
+                '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' + item.quantity + '</td>' +
+                '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' + item.totalCost + '</td>' +
+                '</tr>'
+            );
+        }
+        message += '</table>';
+        return message;
+    }
+
     async sendEmail(data: any) {
-        const convertDateTime = new Date(data.createdAt).toLocaleString("vi-VI");
+        console.log("🚀 ~ file: order.service.ts:84 ~ OrderService ~ sendEmail ~ data:", data)
+        const convertDateTime = await this.convertDateTime(data.createdAt);
+        // Get Order List Detail
+        const listOrder: any = await OrderDetails.findAll({
+            where: {
+                order_id: data.id
+            },
+        })
+        //Render Data from Order List Detail to HTML
+        let renderListHTML = await this.renderHTMLNodeMailer(listOrder)
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 465,
@@ -60,7 +105,15 @@ export class OrderService extends CrudService<typeof Order> {
             to: data.user.email,
             subject: 'PEAN-Stack - XÁC NHẬN ĐƠN HÀNG',
             text: `Xin chào, ${data.user.fullname}`,
-            html: `${convertDateTime}`,
+            html: `<h1>Xin chào, ${data.user.fullname}</h1><br><p>Chúng tôi đến từ PEAN-Stack, vui lòng xác nhận đơn hàng của bạn: </p>
+            <p>MÃ SỐ ĐƠN HÀNG: <strong>${data.id}</strong></p><br>
+            <p>THỜI GIAN: <strong>${convertDateTime}</strong></p><br>
+            <p>TỔNG SỐ SẢN PHẨM: <strong>${data.total_item}</strong></p><br>
+            <p>TỔNG SỐ TIỀN: <strong>${data.total_cost}</strong></p><br>
+            <p>TRẠNG THÁI THANH TOÁN: <strong>${data.isPay === false ? 'CHƯA THANH TOÁN' : 'ĐÃ THANH TOÁN'}</p></strong><br>
+            ${renderListHTML}<br>
+            Xin cám ơn, vui lòng xác nhận đơn hàng của bạn.
+        `,
         };
         transporter.sendMail(mailOptions);
     }
