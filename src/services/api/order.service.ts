@@ -81,7 +81,6 @@ export class OrderService extends CrudService<typeof Order> {
     }
 
     async sendEmail(data: any) {
-        console.log("🚀 ~ file: order.service.ts:84 ~ OrderService ~ sendEmail ~ data:", data)
         const convertDateTime = await this.convertDateTime(data.createdAt);
         // Get Order List Detail
         const listOrder: any = await OrderDetails.findAll({
@@ -97,7 +96,7 @@ export class OrderService extends CrudService<typeof Order> {
             secure: true,
             auth: {
                 user: process.env.EMAIL_USERNAME,
-                pass: 'omln coak wihn dycc',
+                pass: process.env.EMAIL_PASSWORD,
             },
         });
         const mailOptions = {
@@ -105,11 +104,12 @@ export class OrderService extends CrudService<typeof Order> {
             to: data.user.email,
             subject: 'PEAN-Stack - XÁC NHẬN ĐƠN HÀNG',
             text: `Xin chào, ${data.user.fullname}`,
-            html: `<h1>Xin chào, ${data.user.fullname}</h1><br><p>Chúng tôi đến từ PEAN-Stack, vui lòng xác nhận đơn hàng của bạn: </p>
-            <p>MÃ SỐ ĐƠN HÀNG: <strong>${data.id}</strong></p><br>
-            <p>THỜI GIAN: <strong>${convertDateTime}</strong></p><br>
-            <p>TỔNG SỐ SẢN PHẨM: <strong>${data.total_item}</strong></p><br>
-            <p>TỔNG SỐ TIỀN: <strong>${data.total_cost}</strong></p><br>
+            html: `<h1>Xin chào, ${data.user.fullname}</h1>
+            <p>Chúng tôi đến từ PEAN-Stack, vui lòng xác nhận đơn hàng của bạn: </p>
+            <p>MÃ SỐ ĐƠN HÀNG: <strong>${data.id}</strong></p>
+            <p>THỜI GIAN: <strong>${convertDateTime}</strong></p>
+            <p>TỔNG SỐ SẢN PHẨM: <strong>${data.total_item}</strong></p>
+            <p>TỔNG SỐ TIỀN: <strong>${data.total_cost}</strong></p>
             <p>TRẠNG THÁI THANH TOÁN: <strong>${data.isPay === false ? 'CHƯA THANH TOÁN' : 'ĐÃ THANH TOÁN'}</p></strong><br>
             ${renderListHTML}<br>
             Xin cám ơn, vui lòng xác nhận đơn hàng của bạn.
