@@ -8,6 +8,10 @@ Order.belongsTo(User, {
     as: 'user',
     foreignKey: 'user_id'
 })
+User.hasMany(Order, {
+    as: 'orders',
+    foreignKey: 'user_id'
+})
 Order.hasMany(OrderDetails, {
     as: 'order_details',
     foreignKey: 'order_id'

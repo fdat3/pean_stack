@@ -1,18 +1,13 @@
 import { Order, OrderDetails } from "@/models/tables";
 import { CrudService } from "../crudService.pg";
 import { ICrudOption } from "@/interfaces";
-import { error } from "console";
-import { errorService } from "..";
 const nodemailer = require('nodemailer');
 
 
-
 export class OrderService extends CrudService<typeof Order> {
-
     constructor() {
         super(Order);
     }
-
     async order(params: any, user_id: any, totalCost: number, totalItem: number) {
         const data: Array<String | Number>[] = params.cart;
         const check = await this.exec(this.model.create({
@@ -43,7 +38,19 @@ export class OrderService extends CrudService<typeof Order> {
         await this.sendEmail(sendEmail);
         return check
     }
-
+    async cancelOrder(params: any, body: any) {
+        const result = await Order.update(
+            {
+                status: body.status
+            },
+            {
+                where:
+                {
+                    id: params.id
+                }
+            })
+        return result
+    }
     async convertDateTime(data: any) {
         const options: any = {
             weekday: "long",
@@ -56,7 +63,6 @@ export class OrderService extends CrudService<typeof Order> {
         };
         return new Date(data).toLocaleString('vi-VI', options);
     }
-
     async renderHTMLNodeMailer(data: any) {
         let message = (
             '<table style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%;">' +
@@ -79,7 +85,6 @@ export class OrderService extends CrudService<typeof Order> {
         message += '</table>';
         return message;
     }
-
     async sendEmail(data: any) {
         const convertDateTime = await this.convertDateTime(data.createdAt);
         // Get Order List Detail

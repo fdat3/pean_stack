@@ -3,12 +3,28 @@ import { CrudService } from "../crudService.pg";
 import { ICrudOption } from "@/interfaces";
 import userSecurity from "@/security/user";
 import { errorService } from "..";
+import moment from "moment";
+import { Sequelize } from "sequelize";
 export class UserService extends CrudService<typeof User> {
     private userSecurity: userSecurity
 
     constructor() {
         super(User);
         this.userSecurity = new userSecurity()
+    }
+    async getCancelOrder(params: any, option?: ICrudOption) {
+        const result = await User.findOne({
+            where: {
+                id: params
+            },
+            include: {
+                association: 'orders',
+                where: {
+                    deleted_at: null
+                }
+            }
+        })
+        return result
     }
     async updateRefreshToken(params: any, option?: ICrudOption) {
         const item = await this.exec(this.model.findByPk(option.filter.id), {
@@ -23,7 +39,6 @@ export class UserService extends CrudService<typeof User> {
         });
         return item;
     }
-
     async validateUsername(params: any) {
         const checkUsername = await User.count({
             where: {
@@ -53,14 +68,14 @@ export class UserService extends CrudService<typeof User> {
             let newUser: any;
             const checkUsername: any = await this.validateUsername(params.fullname)
             const checkEmail: any = await this.validateEmail(params.email)
-            if (checkUsername < 0 || checkEmail < 0) {
+            if (checkUsername > 0 || checkEmail > 0) {
+                throw errorService.database.customError('Can not register user !', 500)
+            } else {
                 const encryptedPassword = this.userSecurity.encrypt(params.password)
                 newUser = {
                     ...params,
                     password: encryptedPassword,
                 }
-            } else {
-                throw errorService.database.customError('Can not register user !', 500)
             }
             const savedUser = await this.exec(this.create(newUser))
             return savedUser

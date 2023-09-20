@@ -18,6 +18,10 @@ export const Order = sequelize.define(
         total_cost: {
             type: DataTypes.INTEGER.UNSIGNED
         },
+        status: {
+            type: DataTypes.ENUM,
+            values: ['ACTIVE', 'PENDING', 'DELETE'],
+        },
         isPay: {
             type: DataTypes.BOOLEAN
         },
@@ -26,10 +30,13 @@ export const Order = sequelize.define(
         },
         updatedAt: {
             type: DataTypes.DATE
+        },
+        deletedAt: {
+            type: DataTypes.DATE
         }
     }, {
     timestamps: true,
     underscored: true,
     freezeTableName: true,
-    paranoid: false,
+    paranoid: true,
 })

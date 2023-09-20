@@ -17,7 +17,7 @@ export default class CartRouter extends BaseRouter {
         try {
             const params = req.params;
             const data = req.body;
-            const cart: Array<String | Number>[] = req.session.cart;
+            const cart: Array<String | Number>[] = req.session.cart ? req.session.cart : [];
             cart.filter((item: any) => {
                 if (params.id === item.pd_id) {
                     item.qty = data.qty;
@@ -57,7 +57,7 @@ export default class CartRouter extends BaseRouter {
 
     async get(req: Request, res: Response) {
         const initialValue = 0;
-        const data: Array<string | number>[] = req.session.cart;
+        const data: Array<string | number>[] = req.session.cart ? req.session.cart : [];
         const totalCost = data.reduce((accumulator: any, currentValue: any) => accumulator + currentValue.cost, initialValue);
         const totalItem = data.reduce((accumulator: any, currentValue: any) => accumulator + currentValue.qty, initialValue);
         req.session.totalCost = totalCost;
@@ -66,7 +66,7 @@ export default class CartRouter extends BaseRouter {
     }
 
     async remove(req: Request, res: Response) {
-        const data: Array<String | Number>[] = req.session.cart;
+        const data: Array<String | Number>[] = req.session.cart ? req.session.cart : [];
         const getId: String = req.params.id;
         data.filter((item: any) => {
             if (item.pd_id === getId) {
