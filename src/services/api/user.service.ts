@@ -13,6 +13,7 @@ export class UserService extends CrudService<typeof User> {
         super(User);
         this.userSecurity = new userSecurity()
     }
+
     async getTotalOrder(params: any, option?: ICrudOption) {
         const total_usage_star: any = [
             sequelize.literal(`(

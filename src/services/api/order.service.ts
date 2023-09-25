@@ -1,6 +1,8 @@
 import { Order, OrderDetails } from "@/models/tables";
 import { CrudService } from "../crudService.pg";
 import { ICrudOption } from "@/interfaces";
+import * as mom from "moment";
+const moment = require("moment").default || require("moment");
 const nodemailer = require('nodemailer');
 
 
@@ -37,6 +39,18 @@ export class OrderService extends CrudService<typeof Order> {
         })
         await this.sendEmail(sendEmail);
         return check
+    }
+    async getTotalOrderByDay(params: any, option?: ICrudOption) {
+        const addDay = moment(params.endedAt).add(1, 'd').valueOf();
+        const result = await Order.findAndCountAll({
+            where: {
+                user_id: params.user_id,
+                created_at: {
+                    $between: [params.createdAt, addDay]
+                }
+            }
+        })
+        return result
     }
     async updateOrderStatus(params: any, body: any) {
         const result = await Order.update(

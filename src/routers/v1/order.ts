@@ -11,6 +11,7 @@ export default class OrderRouter extends BaseRouter {
         this.router.get('/', this.createMiddlewares(), this.route(this.get));
         this.router.post('/', this.createMiddlewares(), this.route(this.order));
         this.router.put('/update-status/:id', this.createMiddlewares(), this.route(this.updateOrderStatus));
+        this.router.get('/get-total-order-by-day', this.createMiddlewares(), this.route(this.getTotalOrderbyDay))
     }
 
     async get(req: Request, res: Response) {
@@ -18,6 +19,11 @@ export default class OrderRouter extends BaseRouter {
         const totalCost = req.session.totalCost;
         const totalItem = req.session.totalItem;
         this.onSuccessAsList(res, { data, totalCost, totalItem });
+    }
+    async getTotalOrderbyDay(req: Request, res: Response) {
+        req.body.user_id = req.tokenInfo.payload.user_id;
+        const data = await orderController.getTotalOrderbyDay(req.body, req.body.user_id);
+        this.onSuccessAsList(res, data);
     }
 
     async order(req: Request, res: Response) {

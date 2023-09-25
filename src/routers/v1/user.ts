@@ -16,6 +16,8 @@ export default class UserRouter extends BaseRouter {
         this.onSuccess(res, data)
     }
 
+
+
     createMiddlewares(): any[] {
         return [tokenMiddleware.run()];
     }
