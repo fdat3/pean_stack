@@ -1,6 +1,7 @@
 import {
     Order,
     OrderDetails,
+    Product,
     User,
 } from '../models/tables/';
 
@@ -19,6 +20,10 @@ Order.hasMany(OrderDetails, {
 OrderDetails.belongsTo(Order, {
     as: 'order',
     foreignKey: 'order_id'
+})
+OrderDetails.hasMany(Product, {
+    as: 'pd_id',
+    foreignKey: 'pd_id'
 })
 
 

@@ -52,6 +52,9 @@ export class OrderService extends CrudService<typeof Order> {
         })
         return result
     }
+    async getTotalOrder(params: any, option?: ICrudOption) {
+        return await this.exec(this.model.findAndCountAll())
+    }
     async updateOrderStatus(params: any, body: any) {
         const result = await Order.update(
             {

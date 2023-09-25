@@ -12,6 +12,9 @@ export const OrderDetails = sequelize.define(
         orderId: {
             type: DataTypes.UUID
         },
+        pdId: {
+            type: DataTypes.UUID
+        },
         pdName: {
             type: DataTypes.STRING
         },

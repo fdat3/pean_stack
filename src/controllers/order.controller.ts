@@ -13,6 +13,9 @@ export class OrderController extends CrudController<typeof orderService> {
     async getTotalOrderbyDay(params: any, user_id: any) {
         return await this.service.getTotalOrderByDay(params, user_id);
     }
+    async getTotalOrder(params: any, option?: any) {
+        return await this.service.getTotalOrder(params, option);
+    }
     async updateOrderStatus(params: any, body: any) {
         return await this.service.updateOrderStatus(params, body);
     }

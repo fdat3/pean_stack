@@ -1,6 +1,6 @@
 import { Request, Response, BaseRouter } from "@/routers/base";
 import * as express from 'express';
-import { tokenMiddleware } from "@/middlewares";
+import { authMiddleware, tokenMiddleware } from "@/middlewares";
 import { orderController } from "@/controllers";
 
 export default class OrderRouter extends BaseRouter {
@@ -12,6 +12,9 @@ export default class OrderRouter extends BaseRouter {
         this.router.post('/', this.createMiddlewares(), this.route(this.order));
         this.router.put('/update-status/:id', this.createMiddlewares(), this.route(this.updateOrderStatus));
         this.router.get('/get-total-order-by-day', this.createMiddlewares(), this.route(this.getTotalOrderbyDay))
+
+        // ADMIN CHART
+        this.router.get('/chart/get-total-order', this.adminMiddlewares(), this.route(this.getTotalOrder))
     }
 
     async get(req: Request, res: Response) {
@@ -19,6 +22,10 @@ export default class OrderRouter extends BaseRouter {
         const totalCost = req.session.totalCost;
         const totalItem = req.session.totalItem;
         this.onSuccessAsList(res, { data, totalCost, totalItem });
+    }
+    async getTotalOrder(req: Request, res: Response) {
+        const data = await orderController.getTotalOrder(req.body)
+        this.onSuccessAsList(res, data);
     }
     async getTotalOrderbyDay(req: Request, res: Response) {
         req.body.user_id = req.tokenInfo.payload.user_id;
@@ -41,5 +48,8 @@ export default class OrderRouter extends BaseRouter {
 
     createMiddlewares(): any[] {
         return [tokenMiddleware.run()];
+    }
+    adminMiddlewares(): any[] {
+        return [authMiddleware.run()];
     }
 }
