@@ -38,7 +38,7 @@ export class OrderService extends CrudService<typeof Order> {
         await this.sendEmail(sendEmail);
         return check
     }
-    async cancelOrder(params: any, body: any) {
+    async updateOrderStatus(params: any, body: any) {
         const result = await Order.update(
             {
                 status: body.status

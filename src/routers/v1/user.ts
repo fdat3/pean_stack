@@ -8,11 +8,11 @@ export default class UserRouter extends BaseRouter {
     constructor() {
         super();
         this.router = express.Router();
-        this.router.get('/get-cancel-order', this.createMiddlewares(), this.route(this.getCancelOrder));
+        this.router.get('/get-total-order', this.createMiddlewares(), this.route(this.getTotalOrder));
     }
 
-    async getCancelOrder(req: Request, res: Response) {
-        const data = await userController.getCancelOrder(req.tokenInfo.payload.user_id);
+    async getTotalOrder(req: Request, res: Response) {
+        const data = await userController.getTotalOrder(req.tokenInfo.payload.user_id);
         this.onSuccess(res, data)
     }
 

@@ -27,7 +27,7 @@ export default class AuthRouter extends BaseRouter {
             secure: true,
             auth: {
                 user: process.env.EMAIL_USERNAME,
-                pass: 'omln coak wihn dycc',
+                pass: process.env.EMAIL_PASSWORD,
             },
         });
         const mailOptions = {

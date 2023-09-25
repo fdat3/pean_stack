@@ -5,6 +5,7 @@ import userSecurity from "@/security/user";
 import { errorService } from "..";
 import moment from "moment";
 import { Sequelize } from "sequelize";
+import sequelize from "sequelize";
 export class UserService extends CrudService<typeof User> {
     private userSecurity: userSecurity
 
@@ -12,17 +13,26 @@ export class UserService extends CrudService<typeof User> {
         super(User);
         this.userSecurity = new userSecurity()
     }
-    async getCancelOrder(params: any, option?: ICrudOption) {
+    async getTotalOrder(params: any, option?: ICrudOption) {
+        const total_usage_star: any = [
+            sequelize.literal(`(
+              SELECT
+              COALESCE(SUM("orders"."total_cost"), 0) as "sum_wallet"
+              FROM
+              "orders" as "orders"
+              where "orders"."deleted_at" is null
+              and "orders"."user_id" = "users"."id"
+            )`),
+            'sum_wallet',
+        ];
         const result = await User.findOne({
+            logging: true,
             where: {
                 id: params
             },
-            include: {
-                association: 'orders',
-                where: {
-                    deleted_at: null
-                }
-            }
+            attributes: {
+                include: [total_usage_star]
+            },
         })
         return result
     }

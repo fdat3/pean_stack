@@ -14,7 +14,7 @@ export class UserController extends CrudController<typeof userService> {
         return await this.service.register(params, option);
     }
 
-    async getCancelOrder(params: any, option?: ICrudOption) {
-        return await this.service.getCancelOrder(params, option)
+    async getTotalOrder(params: any, option?: ICrudOption) {
+        return await this.service.getTotalOrder(params, option)
     }
 }

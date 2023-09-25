@@ -10,7 +10,7 @@ export default class OrderRouter extends BaseRouter {
         this.router = express.Router();
         this.router.get('/', this.createMiddlewares(), this.route(this.get));
         this.router.post('/', this.createMiddlewares(), this.route(this.order));
-        this.router.put('/update-status/:id', this.createMiddlewares(), this.route(this.cancelOrder));
+        this.router.put('/update-status/:id', this.createMiddlewares(), this.route(this.updateOrderStatus));
     }
 
     async get(req: Request, res: Response) {
@@ -28,9 +28,8 @@ export default class OrderRouter extends BaseRouter {
         this.onSuccessAsList(res, data)
     }
 
-    async cancelOrder(req: Request, res: Response) {
-        console.log("🚀 ~ file: order.ts:33 ~ OrderRouter ~ cancelOrder ~ req.params, req.body:", req.params, req.body)
-        const data = await orderController.cancelOrder(req.params, req.body);
+    async updateOrderStatus(req: Request, res: Response) {
+        const data = await orderController.updateOrderStatus(req.params, req.body);
         this.onSuccess(res, data)
     }
 
