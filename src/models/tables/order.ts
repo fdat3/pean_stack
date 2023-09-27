@@ -16,7 +16,7 @@ export const Order = sequelize.define(
             type: DataTypes.INTEGER.UNSIGNED
         },
         total_cost: {
-            type: DataTypes.INTEGER.UNSIGNED
+            type: DataTypes.FLOAT
         },
         status: {
             type: DataTypes.ENUM,

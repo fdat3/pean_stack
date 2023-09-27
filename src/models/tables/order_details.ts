@@ -22,7 +22,7 @@ export const OrderDetails = sequelize.define(
             type: DataTypes.INTEGER.UNSIGNED
         },
         totalCost: {
-            type: DataTypes.INTEGER.UNSIGNED
+            type: DataTypes.FLOAT
         },
         createdAt: {
             type: DataTypes.DATE

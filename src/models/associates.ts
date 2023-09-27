@@ -22,8 +22,6 @@ OrderDetails.belongsTo(Order, {
     foreignKey: 'order_id'
 })
 OrderDetails.hasMany(Product, {
-    as: 'pd_id',
-    foreignKey: 'pd_id'
+    as: 'products',
+    foreignKey: 'id'
 })
-
-

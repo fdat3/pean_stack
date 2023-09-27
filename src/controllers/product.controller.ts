@@ -10,4 +10,7 @@ export class ProductController extends CrudController<typeof productService> {
     async add(params: any, option?: ICrudOption) {
         return await this.service.add(params, option);
     }
+    async bestSeller(params: any, option?: ICrudOption) {
+        return await this.service.bestSeller(params, option);
+    }
 }

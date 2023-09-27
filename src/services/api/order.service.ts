@@ -2,6 +2,7 @@ import { Order, OrderDetails } from "@/models/tables";
 import { CrudService } from "../crudService.pg";
 import { ICrudOption } from "@/interfaces";
 import * as mom from "moment";
+import sequelize from "sequelize";
 const moment = require("moment").default || require("moment");
 const nodemailer = require('nodemailer');
 
@@ -10,8 +11,10 @@ export class OrderService extends CrudService<typeof Order> {
     constructor() {
         super(Order);
     }
+
     async order(params: any, user_id: any, totalCost: number, totalItem: number) {
         const data: Array<String | Number>[] = params.cart;
+        console.log("🚀 ~ file: order.service.ts:15 ~ OrderService ~ order ~ params.cart:", params.cart)
         const check = await this.exec(this.model.create({
             user_id: user_id,
             total_item: totalItem,
@@ -24,7 +27,8 @@ export class OrderService extends CrudService<typeof Order> {
                 order_id: check.id,
                 quantity: element.qty,
                 totalCost: element.cost,
-                pdName: element.pd_name
+                pdName: element.pd_name,
+                pdId: element.pd_id
             })
         }
         const sendEmail = await this.model.findOne({
@@ -139,4 +143,5 @@ export class OrderService extends CrudService<typeof Order> {
         };
         transporter.sendMail(mailOptions);
     }
+
 }
