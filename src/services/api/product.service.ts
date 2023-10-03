@@ -32,14 +32,10 @@ export class ProductService extends CrudService<typeof Product> {
             attributes: {
                 include: [sum_qty],
             },
+            order: [[sequelize.literal('sum_qty'), 'DESC']],
+            limit: 1,
             group: ['id']
         })
-        const findMax = Math.max(...result.map(item => item.dataValues.sum_qty))
-        const bestSeller = result.filter((item) => {
-            if (parseInt(item.dataValues.sum_qty) === findMax) {
-                return item
-            }
-        })
-        return bestSeller
+        return result
     }
 }
